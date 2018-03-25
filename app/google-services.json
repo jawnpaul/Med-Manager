@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "692406605801",
+    "firebase_url": "https://med-manager-2c3c4.firebaseio.com",
+    "project_id": "med-manager-2c3c4",
+    "storage_bucket": "med-manager-2c3c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692406605801:android:b13093c50739c5ed",
+        "android_client_info": {
+          "package_name": "ng.org.knowit.med_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692406605801-fc7kup4a1p0l27pt2gp1k0qh1pdrjntm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ng.org.knowit.med_manager",
+            "certificate_hash": "e06f9fff6a0cab493b6b1f23e34bf906420b6d6e"
+          }
+        },
+        {
+          "client_id": "692406605801-l8rgguns7su46dhkj2l9vvp06ila4m4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_8z9Fmd5sl-jmZv89eX53uDCO7BhIacg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692406605801-l8rgguns7su46dhkj2l9vvp06ila4m4k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
