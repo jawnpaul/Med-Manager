@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
 // Choose authentication providers
         @SuppressWarnings("deprecation") List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
