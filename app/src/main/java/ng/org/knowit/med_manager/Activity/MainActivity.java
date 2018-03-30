@@ -1,5 +1,6 @@
 package ng.org.knowit.med_manager.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,15 +12,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -45,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
 
-    private MedicineDatabaseAdapter mMedicineDatabaseAdapter;
+    private String[] frequency;
+
     private SQLiteDatabase mSQLiteDatabase;
 
 
@@ -65,10 +69,9 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = getAllData();
 
 
+        MedicineDatabaseAdapter medicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
 
-        mMedicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
-
-        mRecyclerView.setAdapter(mMedicineDatabaseAdapter);
+        mRecyclerView.setAdapter(medicineDatabaseAdapter);
 
 
         //Initialize all the views
@@ -88,8 +91,7 @@ public class MainActivity extends AppCompatActivity {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                showChangeLangDialog();
             }
         });
 
@@ -171,6 +173,30 @@ public class MainActivity extends AppCompatActivity {
                 // ...
             }
         }
+    }
+
+    public void showChangeLangDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.add_medicine_dialog, null);
+        dialogBuilder.setView(dialogView);
+
+        //final EditText edt = (EditText) dialogView.findViewById(R.id.budgetAmount);
+
+        dialogBuilder.setTitle("Add new medicine");
+        dialogBuilder.setIcon(R.mipmap.ic_launcher);
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+               // edt.getText().toString();
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.show();
     }
 
 }

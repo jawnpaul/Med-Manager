@@ -18,7 +18,7 @@ public class TestUtil {
             return;
         }
 
-        List<ContentValues> list = new ArrayList<ContentValues>();
+        List<ContentValues> list = new ArrayList<>();
 
         ContentValues cv = new ContentValues();
 

@@ -17,8 +17,8 @@ import ng.org.knowit.med_manager.R;
 
 public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDatabaseAdapter.MedicineDatabaseViewHolder> {
 
-    private Context mContext;
-    private Cursor mCursor;
+    private final Context mContext;
+    private final Cursor mCursor;
 
     public MedicineDatabaseAdapter(Context context, Cursor cursor){
         this.mContext = context;
@@ -67,8 +67,11 @@ public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDataba
 
 
     class MedicineDatabaseViewHolder extends RecyclerView.ViewHolder{
-        TextView medicineNameTextView, medicineDescriptionTextView, medicineFrequencyTextView,
-                medicineDurationTextView, medicineTimeStampTextView;
+        final TextView medicineNameTextView;
+        final TextView medicineDescriptionTextView;
+        final TextView medicineFrequencyTextView;
+        final TextView medicineDurationTextView;
+        final TextView medicineTimeStampTextView;
 
         public MedicineDatabaseViewHolder(View itemView) {
             super(itemView);

@@ -9,4 +9,6 @@
     <string name="search">Search</string>
     <string name="sort_by_date">Sort by date</string>
     <string name="sort_by_frequency">Sort by frequency</string>
+    <string name="medicine_description">Medicine Description</string>
+    <string name="medicine_name">Medicine Name</string>
 </resources>
