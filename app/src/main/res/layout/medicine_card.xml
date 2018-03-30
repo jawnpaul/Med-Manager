@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_medicine"
+        android:layout_width="match_parent"
+        android:layout_height="192dp"
+        card_view:cardCornerRadius="4dp"
+        android:elevation="5dp">
+
+        <LinearLayout
+            android:layout_width="136dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/image_medicine"
+                android:layout_width="140dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="210dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/text_medicine_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="First medicine" />
+
+            <TextView
+                android:id="@+id/text_medicine_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="0.82"
+                android:text="This is the description of the medicine "
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_frequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="This will show the frequency" />
+
+            <TextView
+                android:id="@+id/text_duration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Jan2018-Feb2019" />
+            <TextView
+                android:id="@+id/text_date_created"
+                android:text="29 march 2018"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

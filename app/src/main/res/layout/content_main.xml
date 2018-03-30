@@ -26,9 +26,11 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/main_recycler_view"
+            android:id="@+id/recycler_view_medicine"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

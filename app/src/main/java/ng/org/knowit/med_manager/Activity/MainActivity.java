@@ -1,6 +1,8 @@
-package ng.org.knowit.med_manager;
+package ng.org.knowit.med_manager.Activity;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -10,11 +12,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -23,6 +28,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
+
+import ng.org.knowit.med_manager.Adapters.MedicineDatabaseAdapter;
+import ng.org.knowit.med_manager.Data.MedicineContract;
+import ng.org.knowit.med_manager.Data.MedicineDbHelper;
+import ng.org.knowit.med_manager.Data.TestUtil;
+import ng.org.knowit.med_manager.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,10 +45,31 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
 
+    private MedicineDatabaseAdapter mMedicineDatabaseAdapter;
+    private SQLiteDatabase mSQLiteDatabase;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        RecyclerView mRecyclerView;
+        mRecyclerView = this.findViewById(R.id.recycler_view_medicine);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        MedicineDbHelper dbHelper = new MedicineDbHelper(this);
+        mSQLiteDatabase = dbHelper.getWritableDatabase();
+
+        TestUtil.insertFakeData(mSQLiteDatabase);
+        Cursor cursor = getAllData();
+
+
+
+        mMedicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
+
+        mRecyclerView.setAdapter(mMedicineDatabaseAdapter);
+
 
         //Initialize all the views
         initializeViews();
@@ -83,6 +115,18 @@ public class MainActivity extends AppCompatActivity {
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
+    }
+
+
+    private Cursor getAllData() {
+        return mSQLiteDatabase.query(MedicineContract.MedicineEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                MedicineContract.MedicineEntry.COLUMN_TIMESTAMP);
+
     }
 
     private void initializeViews(){

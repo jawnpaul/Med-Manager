@@ -18,11 +18,11 @@
         android:layout_height="96dp"
         android:layout_gravity="center"/>
     <TextView
-        android:id="@+id/text_name"
+        android:id="@+id/text_person_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="32sp"
+        android:textSize="28sp"
         android:textColor="#000000"
         android:text="@string/john_paul"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
