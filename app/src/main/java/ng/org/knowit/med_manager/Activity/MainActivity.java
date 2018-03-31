@@ -1,5 +1,6 @@
 package ng.org.knowit.med_manager.Activity;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
@@ -29,8 +30,11 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import ng.org.knowit.med_manager.Adapters.MedicineDatabaseAdapter;
 import ng.org.knowit.med_manager.Data.MedicineContract;
@@ -47,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton mFloatingActionButton;
 
     private static final int RC_SIGN_IN = 123;
+
+    private EditText startDateEditText, endDateEditText;
+    private Calendar myCalendar;
+    private DatePickerDialog.OnDateSetListener startDate;
+    private DatePickerDialog.OnDateSetListener endDate;
+
 
     private String[] frequency;
 
@@ -117,6 +127,57 @@ public class MainActivity extends AppCompatActivity {
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
+
+
+       myCalendar  = Calendar.getInstance();
+        startDate = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                    int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelForStartDate();
+            }
+        };
+
+        endDate = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                    int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabelForEndDate();
+            }
+
+        };
+
+
+    }
+    public void pickStartDate(View view){
+        new DatePickerDialog(MainActivity.this, startDate, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+    public void pickEndDateDate(View view){
+        new DatePickerDialog(MainActivity.this, endDate, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void updateLabelForStartDate() {
+        String myFormat = "dd MMMM yyyy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        startDateEditText.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    private void updateLabelForEndDate() {
+        String myFormat = "dd MMMM yyyy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        endDateEditText.setText(sdf.format(myCalendar.getTime()));
     }
 
 
@@ -136,6 +197,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mFloatingActionButton = findViewById(R.id.fab);
+        startDateEditText = findViewById(R.id.edit_text_start_date);
+        endDateEditText = findViewById(R.id.edit_text_end_date);
     }
 
     @Override
@@ -175,13 +238,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showChangeLangDialog() {
+    private void showChangeLangDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.add_medicine_dialog, null);
         dialogBuilder.setView(dialogView);
 
-        //final EditText edt = (EditText) dialogView.findViewById(R.id.budgetAmount);
+
+        final EditText StartDateEditText = dialogView.findViewById(R.id.edit_text_start_date);
+        startDateEditText = StartDateEditText;
+
+        final EditText EndDateEditText = dialogView.findViewById(R.id.edit_text_end_date);
+        endDateEditText = EndDateEditText;
 
         dialogBuilder.setTitle("Add new medicine");
         dialogBuilder.setIcon(R.mipmap.ic_launcher);

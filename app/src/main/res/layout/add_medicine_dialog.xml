@@ -1,43 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+
+<ScrollView android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.design.widget.TextInputLayout
-        android:padding="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/input_medicine_name"
+        <android.support.design.widget.TextInputLayout
+            android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:ems="10"
-            android:hint="@string/medicine_name"
-            android:inputType="text" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:padding="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+            <EditText
+                android:id="@+id/input_medicine_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:ems="10"
+                android:hint="@string/medicine_name"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/input_medicine_description"
+        <android.support.design.widget.TextInputLayout
+            android:padding="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:ems="10"
-            android:hint="@string/medicine_description"
-            android:inputType="textLongMessage" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/input_medicine_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:ems="10"
+                android:hint="@string/medicine_description"
+                android:inputType="textLongMessage" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Spinner
+            android:padding="16dp"
+            android:id="@+id/spinner_frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="100">
+            <EditText
+                android:focusable="false"
+                android:onClick="pickStartDate"
+                android:clickable="true"
+                android:inputType="date"
+                android:id="@+id/edit_text_start_date"
+                android:layout_gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="40"
+                android:hint="Start Date"/>
+            <TextView
+                android:layout_width="0dp"
+                android:text="          -"
+                android:layout_weight="20"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:inputType="date"
+                android:clickable="true"
+                android:focusable="false"
+                android:layout_gravity="end"
+                android:onClick="pickEndDateDate"
+                android:id="@+id/edit_text_end_date"
+                android:layout_weight="40"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:hint="End Date" />
+        </LinearLayout>
 
 
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
