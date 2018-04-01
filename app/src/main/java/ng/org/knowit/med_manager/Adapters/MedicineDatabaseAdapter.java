@@ -17,8 +17,8 @@ import ng.org.knowit.med_manager.R;
 
 public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDatabaseAdapter.MedicineDatabaseViewHolder> {
 
-    private final Context mContext;
-    private final Cursor mCursor;
+    private Context mContext;
+    private Cursor mCursor;
 
     public MedicineDatabaseAdapter(Context context, Cursor cursor){
         this.mContext = context;
@@ -52,6 +52,8 @@ public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDataba
         String medicineTimeStamp = mCursor.getString(mCursor.getColumnIndex(
                 MedicineContract.MedicineEntry.COLUMN_TIMESTAMP));
 
+        long id = mCursor.getLong(mCursor.getColumnIndex(MedicineContract.MedicineEntry._ID));
+
 
         medicineDatabaseViewHolder.medicineNameTextView.setText(medicineName);
         medicineDatabaseViewHolder.medicineDescriptionTextView.setText(medicineDescription);
@@ -63,6 +65,19 @@ public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDataba
     @Override
     public int getItemCount() {
         return mCursor.getCount();
+    }
+
+    public void swapCursor(Cursor newCursor) {
+
+        // Always close the previous mCursor first
+        if (mCursor != null) mCursor.close();
+
+        mCursor = newCursor;
+
+        if (newCursor != null) {
+            // Force the RecyclerView to refresh
+            this.notifyDataSetChanged();
+        }
     }
 
 

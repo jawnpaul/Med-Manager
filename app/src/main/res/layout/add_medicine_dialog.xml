@@ -46,7 +46,8 @@
             android:padding="16dp"
             android:id="@+id/spinner_frequency"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:entries="@array/frequency"/>
         <LinearLayout
             android:orientation="horizontal"
             android:padding="16dp"

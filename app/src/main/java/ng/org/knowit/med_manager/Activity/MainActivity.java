@@ -1,6 +1,7 @@
 package ng.org.knowit.med_manager.Activity;
 
 import android.app.DatePickerDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -49,18 +53,25 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
     private FloatingActionButton mFloatingActionButton;
+    private Spinner frequencySpinner;
+
+    private MedicineDatabaseAdapter medicineDatabaseAdapter;
 
     private static final int RC_SIGN_IN = 123;
 
-    private EditText startDateEditText, endDateEditText;
+    private int spinnerPosition;
+
+
+    private EditText startDateEditText, endDateEditText, medicineNameEditText, medicineDescriptionEditText;
     private Calendar myCalendar;
     private DatePickerDialog.OnDateSetListener startDate;
     private DatePickerDialog.OnDateSetListener endDate;
 
 
-    private String[] frequency;
+
 
     private SQLiteDatabase mSQLiteDatabase;
+    private String medicineFrequency, medicineName, medicineDescription, medicineDuration, medicineStartDate, medicineEndDate;
 
 
     @Override
@@ -76,12 +87,13 @@ public class MainActivity extends AppCompatActivity {
         mSQLiteDatabase = dbHelper.getWritableDatabase();
 
         TestUtil.insertFakeData(mSQLiteDatabase);
-        Cursor cursor = getAllData();
+        Cursor cursor = getAllMedicine();
 
 
-        MedicineDatabaseAdapter medicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
+         medicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
 
         mRecyclerView.setAdapter(medicineDatabaseAdapter);
+
 
 
         //Initialize all the views
@@ -101,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showChangeLangDialog();
+                createNewMedicineDialog();
             }
         });
 
@@ -181,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private Cursor getAllData() {
+    private Cursor getAllMedicine() {
         return mSQLiteDatabase.query(MedicineContract.MedicineEntry.TABLE_NAME,
                 null,
                 null,
@@ -199,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
         mFloatingActionButton = findViewById(R.id.fab);
         startDateEditText = findViewById(R.id.edit_text_start_date);
         endDateEditText = findViewById(R.id.edit_text_end_date);
+        medicineDescriptionEditText = findViewById(R.id.input_medicine_description);
+        medicineNameEditText = findViewById(R.id.input_medicine_name);
     }
 
     @Override
@@ -238,11 +252,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showChangeLangDialog() {
+    private void createNewMedicineDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.add_medicine_dialog, null);
         dialogBuilder.setView(dialogView);
+
+        frequencySpinner = dialogView.findViewById(R.id.spinner_frequency);
+
+
+        final EditText MedicineNameEditText = dialogView.findViewById(R.id.input_medicine_name);
+        medicineNameEditText = MedicineNameEditText;
+
+
+        final EditText MedicineDescriptionEditText = dialogView.findViewById(R.id.input_medicine_description);
+        medicineDescriptionEditText = MedicineDescriptionEditText;
 
 
         final EditText StartDateEditText = dialogView.findViewById(R.id.edit_text_start_date);
@@ -253,9 +277,12 @@ public class MainActivity extends AppCompatActivity {
 
         dialogBuilder.setTitle("Add new medicine");
         dialogBuilder.setIcon(R.mipmap.ic_launcher);
-        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                // edt.getText().toString();
+                //Toast.makeText(MainActivity.this, "Aye aye", Toast.LENGTH_SHORT).show();
+                addToMedicineList();
+
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -267,4 +294,43 @@ public class MainActivity extends AppCompatActivity {
         b.show();
     }
 
+    private long addNewMedicine(String medicineName, String medicineDescription, String medicineFrequency, String medicineDuration){
+        ContentValues cv = new ContentValues();
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_NAME, medicineName);
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DESCRIPTION, medicineDescription);
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_FREQUENCY, medicineFrequency);
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DURATION, medicineDuration);
+
+
+        return mSQLiteDatabase.insert(MedicineContract.MedicineEntry.TABLE_NAME,null,cv);
+    }
+
+    private boolean removeMedicine (long id){
+        return mSQLiteDatabase.delete(
+                MedicineContract.MedicineEntry.TABLE_NAME, MedicineContract.MedicineEntry._ID + "=" + id, null) >0;
+    }
+
+    public void addToMedicineList(){
+        //Setting the values gotten from the dialog to corresponding global variables
+        medicineFrequency = String.valueOf(frequencySpinner.getSelectedItem());
+        medicineName = medicineNameEditText.getText().toString();
+        medicineDescription = medicineDescriptionEditText.getText().toString();
+        medicineStartDate = startDateEditText.getText().toString();
+        medicineEndDate = endDateEditText.getText().toString();
+
+        //Checking to make sure the values are not empty
+        if (medicineName.length()==0 || medicineDescription.length()==0 ||
+                medicineFrequency.length()==0 || medicineStartDate.length()==0 || medicineEndDate.length()==0){
+            Toast.makeText(MainActivity.this, "Input Fields cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //Concatenating the two date Strings to form a single String
+        medicineDuration = medicineStartDate + " - " + medicineEndDate;
+        //Log.d("Lol", medicineName+medicineDescription+ medicineFrequency +medicineStartDate + medicineEndDate + " " + medicineDuration);
+        addNewMedicine(medicineName, medicineDescription, medicineFrequency, medicineDuration);
+        Log.d("Lol" ,"Successfully created");
+
+        medicineDatabaseAdapter.swapCursor(getAllMedicine());
+
+    }
 }
