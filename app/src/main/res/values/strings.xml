@@ -11,4 +11,5 @@
     <string name="sort_by_frequency">Sort by frequency</string>
     <string name="medicine_description">Medicine Description</string>
     <string name="medicine_name">Medicine Name</string>
+    <string name="name">Name</string>
 </resources>

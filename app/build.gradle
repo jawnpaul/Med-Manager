@@ -32,7 +32,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:11.8.0'
     compile 'com.firebaseui:firebase-ui-auth:3.2.2'
     compile 'com.android.support:appcompat-v7:27.0.2'
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:27.0.2'
+    testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

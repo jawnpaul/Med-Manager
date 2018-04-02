@@ -227,6 +227,10 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+
+            case R.id.action_account:
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -300,8 +304,6 @@ public class MainActivity extends AppCompatActivity {
         cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DESCRIPTION, medicineDescription);
         cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_FREQUENCY, medicineFrequency);
         cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DURATION, medicineDuration);
-
-
         return mSQLiteDatabase.insert(MedicineContract.MedicineEntry.TABLE_NAME,null,cv);
     }
 
