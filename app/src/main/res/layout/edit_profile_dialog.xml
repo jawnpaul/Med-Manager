@@ -50,6 +50,23 @@
             android:layout_marginTop="8dp">
 
             <EditText
+                android:id="@+id/input_profile_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:ems="10"
+                android:hint="Phone"
+                android:inputType="phone" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
                 android:id="@+id/input_profile_quotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

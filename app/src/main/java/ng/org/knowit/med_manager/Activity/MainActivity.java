@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -26,14 +27,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -67,12 +74,16 @@ public class MainActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener startDate;
     private DatePickerDialog.OnDateSetListener endDate;
 
-
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
 
     private SQLiteDatabase mSQLiteDatabase;
-    private String medicineFrequency, medicineName, medicineDescription, medicineDuration, medicineStartDate, medicineEndDate;
+    private String medicineFrequency, medicineName, medicineDescription,
+            medicineDuration, medicineStartDate, medicineEndDate, profleName;
 
+    private TextView profileNameTextView;
+    private ImageView profileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +93,10 @@ public class MainActivity extends AppCompatActivity {
         //Initialize all the views
         initializeViews();
 
+        mFirebaseAuth = FirebaseAuth.getInstance();
 
         RecyclerView mRecyclerView;
-        mRecyclerView = (RecyclerView) this.findViewById(R.id.recycler_view_medicine);
+        mRecyclerView = this.findViewById(R.id.recycler_view_medicine);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         MedicineDbHelper dbHelper = new MedicineDbHelper(this);
@@ -119,28 +131,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         mNavigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                        
+
+                        switch (menuItem.getItemId()){
+                            case R.id.profile:
+                                Toast.makeText(MainActivity.this, "Profile Clicked", Toast.LENGTH_SHORT).show();
+                        }
+
                         menuItem.setChecked(true);
+
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
                 });
 
-        // Choose authentication providers
-        @SuppressWarnings("deprecation") List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
 
-// Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
+
 
 
        myCalendar  = Calendar.getInstance();
@@ -167,7 +179,46 @@ public class MainActivity extends AppCompatActivity {
 
         };
 
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user!=null){
+                    //User is signed in
+                    updateProfile(user.getDisplayName(), user.getPhotoUrl());
+                }else {
+                    //User is signed out
+                    // Create and launch sign-in intent
 
+                    // Choose authentication providers
+                    @SuppressWarnings("deprecation") List<AuthUI.IdpConfig> providers = Arrays.asList(
+                            new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
+
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setIsSmartLockEnabled(true)
+                                    .setAvailableProviders(providers)
+                                    .setLogo(R.mipmap.ic_launcher)
+                                    .build(),
+                            RC_SIGN_IN);
+                }
+
+            }
+        };
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     public void addToMedicineList(){
@@ -239,8 +290,6 @@ public class MainActivity extends AppCompatActivity {
         endDateEditText.setText(sdf.format(myCalendar.getTime()));
     }
 
-
-
     private void initializeViews(){
         mToolbar = findViewById(R.id.toolbar);
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -250,6 +299,8 @@ public class MainActivity extends AppCompatActivity {
         endDateEditText = findViewById(R.id.edit_text_end_date);
         medicineDescriptionEditText = findViewById(R.id.input_medicine_description);
         medicineNameEditText = findViewById(R.id.input_medicine_name);
+        profileImage = mNavigationView.getHeaderView(0).findViewById(R.id.image_profile);
+        profileNameTextView = mNavigationView.getHeaderView(0).findViewById(R.id.text_profile_name);
     }
 
     @Override
@@ -264,6 +315,11 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+
+            case R.id.action_sign_out :
+                AuthUI.getInstance()
+                        .signOut(this);
+                    return true;
 
             case R.id.action_account:
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
@@ -289,6 +345,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Sign in failed, check response for error code
                 // ...
+                Toast.makeText(this, "Sign in cancelled", Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
@@ -320,19 +378,23 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setIcon(R.mipmap.ic_launcher);
         dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-               // edt.getText().toString();
-                //Toast.makeText(MainActivity.this, "Aye aye", Toast.LENGTH_SHORT).show();
                 addToMedicineList();
 
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                //pass
+
             }
         });
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+
+
+    private void updateProfile(String profileName, Uri photoUrl){
+        profileNameTextView.setText(profileName);
+        Glide.with(getApplicationContext()).load(photoUrl).into(profileImage);
     }
 
 

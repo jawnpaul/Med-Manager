@@ -40,6 +40,7 @@
                         android:layout_height="150dp"
                         android:src="@mipmap/ic_launcher"/>
                     <TextView
+                        android:id="@+id/profile_name_text_view"
                         android:layout_marginTop="10dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
@@ -123,7 +124,7 @@
                         android:layout_height="36dp"
                         android:src="@drawable/ic_action_contact_email"/>
                     <TextView
-                        android:id="@+id/profile_email"
+                        android:id="@+id/profile_email_text_view"
                         android:textStyle="bold"
                         android:layout_gravity="center_vertical"
                         android:layout_width="wrap_content"
@@ -142,7 +143,7 @@
                         android:layout_height="36dp"
                         android:src="@drawable/ic_action_contact_phone"/>
                     <TextView
-                        android:id="@+id/profile_phone"
+                        android:id="@+id/profile_phone_text_view"
                         android:textStyle="bold"
                         android:layout_gravity="center_vertical"
                         android:layout_width="wrap_content"
@@ -161,7 +162,7 @@
                         android:layout_height="36dp"
                         android:src="@drawable/ic_action_quote"/>
                     <TextView
-                        android:id="@+id/profile_quotes"
+                        android:id="@+id/profile_quotes_text_view"
                         android:textStyle="bold"
                         android:layout_gravity="center_vertical"
                         android:layout_width="wrap_content"
