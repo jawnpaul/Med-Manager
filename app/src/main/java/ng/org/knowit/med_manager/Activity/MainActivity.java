@@ -79,25 +79,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Initialize all the views
+        initializeViews();
+
+
         RecyclerView mRecyclerView;
-        mRecyclerView = this.findViewById(R.id.recycler_view_medicine);
+        mRecyclerView = (RecyclerView) this.findViewById(R.id.recycler_view_medicine);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         MedicineDbHelper dbHelper = new MedicineDbHelper(this);
         mSQLiteDatabase = dbHelper.getWritableDatabase();
 
-        TestUtil.insertFakeData(mSQLiteDatabase);
+
         Cursor cursor = getAllMedicine();
 
 
-         medicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
+        medicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
 
         mRecyclerView.setAdapter(medicineDatabaseAdapter);
 
 
 
-        //Initialize all the views
-        initializeViews();
 
 
         setSupportActionBar(mToolbar);
@@ -167,6 +169,51 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    public void addToMedicineList(){
+        //Setting the values gotten from the dialog to corresponding global variables
+        medicineFrequency = String.valueOf(frequencySpinner.getSelectedItem());
+        medicineName = medicineNameEditText.getText().toString();
+        medicineDescription = medicineDescriptionEditText.getText().toString();
+        medicineStartDate = startDateEditText.getText().toString();
+        medicineEndDate = endDateEditText.getText().toString();
+
+        //Checking to make sure the values are not empty
+        if (medicineName.length()==0 || medicineDescription.length()==0 ||
+                medicineFrequency.length()==0 || medicineStartDate.length()==0 || medicineEndDate.length()==0){
+            Toast.makeText(MainActivity.this, "Input Fields cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //Concatenating the two date Strings to form a single String
+        medicineDuration = medicineStartDate + " - " + medicineEndDate;
+        //Log.d("Lol", medicineName+medicineDescription+ medicineFrequency +medicineStartDate + medicineEndDate + " " + medicineDuration);
+        addNewMedicine(medicineName, medicineDescription, medicineFrequency, medicineDuration);
+        Log.d("Lol" ,"Successfully created");
+
+        medicineDatabaseAdapter.swapCursor(getAllMedicine());
+
+    }
+
+    private Cursor getAllMedicine() {
+        return mSQLiteDatabase.query(MedicineContract.MedicineEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                MedicineContract.MedicineEntry.COLUMN_TIMESTAMP);
+
+    }
+
+    private long addNewMedicine(String medicineName, String medicineDescription, String medicineFrequency, String medicineDuration){
+        ContentValues cv = new ContentValues();
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_NAME, medicineName);
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DESCRIPTION, medicineDescription);
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_FREQUENCY, medicineFrequency);
+        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DURATION, medicineDuration);
+        return mSQLiteDatabase.insert(MedicineContract.MedicineEntry.TABLE_NAME,null,cv);
+    }
+
     public void pickStartDate(View view){
         new DatePickerDialog(MainActivity.this, startDate, myCalendar
                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
@@ -193,16 +240,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private Cursor getAllMedicine() {
-        return mSQLiteDatabase.query(MedicineContract.MedicineEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                MedicineContract.MedicineEntry.COLUMN_TIMESTAMP);
-
-    }
 
     private void initializeViews(){
         mToolbar = findViewById(R.id.toolbar);
@@ -298,41 +335,12 @@ public class MainActivity extends AppCompatActivity {
         b.show();
     }
 
-    private long addNewMedicine(String medicineName, String medicineDescription, String medicineFrequency, String medicineDuration){
-        ContentValues cv = new ContentValues();
-        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_NAME, medicineName);
-        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DESCRIPTION, medicineDescription);
-        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_FREQUENCY, medicineFrequency);
-        cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DURATION, medicineDuration);
-        return mSQLiteDatabase.insert(MedicineContract.MedicineEntry.TABLE_NAME,null,cv);
-    }
+
 
     private boolean removeMedicine (long id){
         return mSQLiteDatabase.delete(
                 MedicineContract.MedicineEntry.TABLE_NAME, MedicineContract.MedicineEntry._ID + "=" + id, null) >0;
     }
 
-    public void addToMedicineList(){
-        //Setting the values gotten from the dialog to corresponding global variables
-        medicineFrequency = String.valueOf(frequencySpinner.getSelectedItem());
-        medicineName = medicineNameEditText.getText().toString();
-        medicineDescription = medicineDescriptionEditText.getText().toString();
-        medicineStartDate = startDateEditText.getText().toString();
-        medicineEndDate = endDateEditText.getText().toString();
 
-        //Checking to make sure the values are not empty
-        if (medicineName.length()==0 || medicineDescription.length()==0 ||
-                medicineFrequency.length()==0 || medicineStartDate.length()==0 || medicineEndDate.length()==0){
-            Toast.makeText(MainActivity.this, "Input Fields cannot be empty", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        //Concatenating the two date Strings to form a single String
-        medicineDuration = medicineStartDate + " - " + medicineEndDate;
-        //Log.d("Lol", medicineName+medicineDescription+ medicineFrequency +medicineStartDate + medicineEndDate + " " + medicineDuration);
-        addNewMedicine(medicineName, medicineDescription, medicineFrequency, medicineDuration);
-        Log.d("Lol" ,"Successfully created");
-
-        medicineDatabaseAdapter.swapCursor(getAllMedicine());
-
-    }
 }

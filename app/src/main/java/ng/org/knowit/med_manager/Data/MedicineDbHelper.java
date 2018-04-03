@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import ng.org.knowit.med_manager.Data.MedicineContract.*;
+
 /**
  * Created by john on 3/29/18.
  */
@@ -33,7 +35,7 @@ public class MedicineDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MedicineContract.MedicineEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MedicineEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }
