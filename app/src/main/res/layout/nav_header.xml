@@ -5,26 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:padding="16dp"
-    android:background="@color/blue"
+    android:background="@drawable/gradient_background"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:gravity="bottom"
     tools:ignore="Overdraw">
 
-    <ImageView
-        android:contentDescription="@string/profile_image"
-        android:padding="16dp"
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/image_profile"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="start"
+        android:contentDescription="Profile Image" />
+
     <TextView
         android:id="@+id/text_profile_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="28sp"
-        android:textColor="#000000"
-        android:text="Ade good"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:padding="2dp"
+        android:text="John Paul"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
 </LinearLayout>
