@@ -3,11 +3,13 @@ package ng.org.knowit.med_manager.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,8 +20,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import ng.org.knowit.med_manager.R;
 
@@ -33,11 +41,17 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String profileName, profileEmail, profilePhone, profileQuotes;
 
+    private static final String TAG = "Profile Activity";
+
+    private static final int RC_PHOTO_PICKER = 2;
+
     private ImageView profileImageView;
 
-    private Uri photoUrl;
+    private Uri photoUrl, mPhotoUrl;
 
     private FirebaseUser mFirebaseUser;
+
+    private UserProfileChangeRequest profileNameUpdate, profileImageUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         initializeViews();
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
         profileName = mFirebaseUser.getDisplayName();
         profileNameTextView.setText(profileName);
@@ -139,12 +154,45 @@ public class ProfileActivity extends AppCompatActivity {
             String ProfileName = profileNameEditText.getText().toString();
             if(profileName!=null && !ProfileName.trim().isEmpty()){
                 profileName = ProfileName;
+
+                profileNameUpdate = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(profileName)
+                        .build();
+                mFirebaseUser.updateProfile(profileNameUpdate).addOnCompleteListener(
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Log.d(TAG, "User Name  updated. ");
+                                }
+                            }
+                        });
                 profileNameTextView.setText(profileName);
             }
 
           String  ProfileEmail = profileEmailEditText.getText().toString();
         if (profileEmail!=null && !ProfileEmail.trim().isEmpty()){
             profileEmail = ProfileEmail;
+
+            /*mFirebaseUser.sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.d(TAG, "Email sent. ");
+                        }
+                    });*/
+
+
+            mFirebaseUser.updateEmail(profileEmail)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Log.d(TAG, "User Email address updated");
+                            }
+                        }
+                    });
+
             profileEmailTextView.setText(profileEmail);
         }
 
@@ -159,6 +207,43 @@ public class ProfileActivity extends AppCompatActivity {
             profileQuotes = ProfileQuotes;
             profileQuoteTextView.setText(profileQuotes);
 
+        }
+
+    }
+
+    public void chooseImage(View view){
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "complete action using"), RC_PHOTO_PICKER);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
+            mPhotoUrl = data.getData();
+
+            profileImageUpdate = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(mPhotoUrl)
+                    .build();
+            mFirebaseUser.updateProfile(profileImageUpdate).addOnCompleteListener(
+                    new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Log.d(TAG, "User Image  updated. ");
+                            }
+                        }
+                    });
+
+            Glide.with(this).load(mPhotoUrl).into(profileImageView);
         }
 
     }
