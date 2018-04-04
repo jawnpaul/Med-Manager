@@ -27,89 +27,34 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="405dp">
+                android:layout_height="wrap_content">
                 <LinearLayout
                     android:background="@drawable/gradient_background"
                     android:layout_width="match_parent"
-                    android:layout_height="350dp"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_image"
                         android:layout_marginTop="45dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:src="@mipmap/ic_launcher"/>
+
                     <TextView
                         android:id="@+id/profile_name_text_view"
-                        android:layout_marginTop="10dp"
-                        android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/john_paul"
-                        android:textColor="#fff"
-                        android:textStyle="bold"
-                        android:textSize="21sp"/>
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/account"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
                 </LinearLayout>
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_centerHorizontal="true"
-                    android:elevation="4dp"
-                    android:layout_marginTop="275dp">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Share ON :"
-                        android:layout_margin="2dp"
-                        android:textSize="20sp"
-                        android:textStyle="bold"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:weightSum="3">
-                        <LinearLayout
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="match_parent">
-                           <ImageView
-                               android:layout_width="117dp"
-                               android:layout_height="71dp"
-                               android:src="@drawable/facebook_logo"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="match_parent">
-                            <ImageView
-                                android:layout_width="89dp"
-                                android:layout_height="79dp"
-                                android:src="@drawable/twitter_logo"/>
-
-                        </LinearLayout>
-                        <LinearLayout
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="match_parent">
-                            <ImageView
-                                android:layout_width="86dp"
-                                android:layout_height="70dp"
-                                android:src="@drawable/instagram_logo"/>
-
-                        </LinearLayout>
-                    </LinearLayout>
-
-                </android.support.v7.widget.CardView>
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_width="360dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="center"

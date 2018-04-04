@@ -1,6 +1,8 @@
 package ng.org.knowit.med_manager.Activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import ng.org.knowit.med_manager.R;
 
@@ -26,11 +33,29 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String profileName, profileEmail, profilePhone, profileQuotes;
 
+    private ImageView profileImageView;
+
+    private Uri photoUrl;
+
+    private FirebaseUser mFirebaseUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         initializeViews();
+
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        profileName = mFirebaseUser.getDisplayName();
+        profileNameTextView.setText(profileName);
+
+        profileEmail = mFirebaseUser.getEmail();
+        profileEmailTextView.setText(profileEmail);
+
+        photoUrl = mFirebaseUser.getPhotoUrl();
+        Glide.with(this).load(photoUrl).into(profileImageView);
 
 
         mToolbar = findViewById(R.id.toolbar_profile_activity);
@@ -52,7 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
         profileEmailTextView = findViewById(R.id.profile_email_text_view);
         profilePhoneTextView = findViewById(R.id.profile_phone_text_view);
         profileQuoteTextView = findViewById(R.id.profile_quotes_text_view);
-
+        profileImageView = findViewById(R.id.profile_image);
     }
 
     @Override
@@ -109,17 +134,32 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateProfile(){
-        profileName = profileNameEditText.getText().toString();
-        profileNameTextView.setText(profileName);
 
-        profileEmail = profileEmailEditText.getText().toString();
-        profileEmailTextView.setText(profileEmail);
 
-        profilePhone = profilePhoneEditText.getText().toString();
-        profilePhoneTextView.setText(profilePhone);
+            String ProfileName = profileNameEditText.getText().toString();
+            if(profileName!=null && !ProfileName.trim().isEmpty()){
+                profileName = ProfileName;
+                profileNameTextView.setText(profileName);
+            }
 
-        profileQuotes = profileQuotesEditText.getText().toString();
-        profileQuoteTextView.setText(profileQuotes);
+          String  ProfileEmail = profileEmailEditText.getText().toString();
+        if (profileEmail!=null && !ProfileEmail.trim().isEmpty()){
+            profileEmail = ProfileEmail;
+            profileEmailTextView.setText(profileEmail);
+        }
+
+        String  ProfilePhone = profilePhoneEditText.getText().toString();
+        if (profilePhone==null && !ProfilePhone.trim().isEmpty()){
+            profilePhone = ProfilePhone;
+            profilePhoneTextView.setText(profilePhone);
+        }
+
+        String ProfileQuotes = profileQuotesEditText.getText().toString();
+        if (profileQuotes==null && !ProfilePhone.trim().isEmpty()){
+            profileQuotes = ProfileQuotes;
+            profileQuoteTextView.setText(profileQuotes);
+
+        }
 
     }
 }

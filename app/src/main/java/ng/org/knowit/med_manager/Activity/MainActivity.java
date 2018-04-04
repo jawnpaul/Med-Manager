@@ -80,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
     private SQLiteDatabase mSQLiteDatabase;
     private String medicineFrequency, medicineName, medicineDescription,
-            medicineDuration, medicineStartDate, medicineEndDate, profleName;
+            medicineDuration, medicineStartDate,
+            medicineEndDate, profleName, profileEmail, profilePhoneNumber;
+    private Uri profilePhotoUrl;
 
     private TextView profileNameTextView;
     private ImageView profileImage;
@@ -185,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
                     //User is signed in
+                    profleName = user.getDisplayName();
+                    profileEmail = user.getEmail();
+                    profilePhoneNumber = user.getPhoneNumber();
+                    profilePhotoUrl = user.getPhotoUrl();
                     updateProfile(user.getDisplayName(), user.getPhotoUrl());
                 }else {
                     //User is signed out
@@ -322,7 +328,9 @@ public class MainActivity extends AppCompatActivity {
                     return true;
 
             case R.id.action_account:
+
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+
                 startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
