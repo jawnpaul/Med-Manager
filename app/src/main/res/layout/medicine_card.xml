@@ -1,81 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
-    xmlns:card_view="http://schemas.android.com/tools"
-    android:orientation="vertical"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
-    android:layout_height="192dp">
+    android:layout_height="200dp"
+    android:layout_margin="5dp"
+    card_view:cardCornerRadius="4dp"
+    android:elevation="5dp">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_medicine"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        card_view:cardCornerRadius="4dp"
-        android:elevation="5dp">
+        android:weightSum="100">
 
         <LinearLayout
-            android:weightSum="100"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_weight="30"
-                android:layout_width="0dp"
-                android:layout_height="match_parent">
-                <ImageView
-                    android:id="@+id/image_medicine"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_weight="70"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="0dp">
-
-                <TextView
-                    android:id="@+id/text_medicine_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="First medicine" />
-
-                <TextView
-                    android:id="@+id/text_medicine_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="This is the description of the medicine "
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/text_frequency"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="This will show the frequency" />
-
-                <TextView
-                    android:id="@+id/text_duration"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="Jan2018-Feb2019" />
-                <TextView
-                    android:id="@+id/text_date_created"
-                    android:text="29 march 2018"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="30"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/medicine_image"
+                android:src="@drawable/common_google_signin_btn_icon_dark_normal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="70"
+            android:orientation="vertical"
+            android:padding="0dp">
+
+
+            <TextView
+                android:id="@+id/text_medicine_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:paddingTop="0dp"
+                android:text="First medicine"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+            <TextView
+                android:id="@+id/text_medicine_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="0dp"
+                android:text="This is the description of the medicine "
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_below="@+id/text_medicine_name"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/text_frequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Twice a day"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_above="@+id/text_duration" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration:"
+                android:paddingBottom="0dp"
+                android:layout_above="@+id/textView15"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/text_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jan 2014 - Jan 2018"
+                android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+                android:layout_alignTop="@+id/textView12"
+                android:layout_toRightOf="@+id/textView12"
+                android:layout_toEndOf="@+id/textView12" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:paddingBottom="2dp"
+                android:text="Created :" />
+
+            <TextView
+                android:id="@+id/text_date_created"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/textView15"
+                android:layout_toEndOf="@+id/textView12"
+                android:layout_toRightOf="@+id/textView12"
+                android:text="October first 1960"
+                android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
+        </RelativeLayout>
+
+    </LinearLayout>
 
 
 
     </android.support.v7.widget.CardView>
 
-</LinearLayout>
