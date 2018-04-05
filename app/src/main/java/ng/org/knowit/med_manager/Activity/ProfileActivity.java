@@ -1,7 +1,11 @@
 package ng.org.knowit.med_manager.Activity;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -18,6 +22,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,17 +34,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ng.org.knowit.med_manager.Data.UpdateProfileContract;
+import ng.org.knowit.med_manager.Data.UpdateProfileDbHelper;
 import ng.org.knowit.med_manager.R;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
 
-    private EditText profileNameEditText, profileEmailEditText, profileQuotesEditText, profilePhoneEditText;
+    private EditText profileNameEditText, profileQuotesEditText, profilePhoneEditText;
 
     private TextView profileNameTextView, profileEmailTextView, profileQuoteTextView, profilePhoneTextView;
 
-    private String profileName, profileEmail, profilePhone, profileQuotes;
+    private String profileName, profileEmail, profilePhone, profileQuotes,profilePhone1;
 
     private static final String TAG = "Profile Activity";
 
@@ -47,18 +57,29 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ImageView profileImageView;
 
+    private SQLiteDatabase mSQLiteDatabase;
+
     private Uri photoUrl, mPhotoUrl;
 
+
     private FirebaseUser mFirebaseUser;
+
+    private Cursor mCursor;
 
     private UserProfileChangeRequest profileNameUpdate, profileImageUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_profile);
 
+
+        profilePhone = "";
+        profileQuotes = "";
+
         initializeViews();
+
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -72,6 +93,20 @@ public class ProfileActivity extends AppCompatActivity {
         photoUrl = mFirebaseUser.getPhotoUrl();
         Glide.with(this).load(photoUrl).into(profileImageView);
 
+        UpdateProfileDbHelper dbHelper = new UpdateProfileDbHelper(this);
+        mSQLiteDatabase = dbHelper.getWritableDatabase();
+        mSQLiteDatabase = dbHelper.getReadableDatabase();
+
+        mCursor = mSQLiteDatabase.query(UpdateProfileContract.UpdateProfileEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES);
+
+
+
 
         mToolbar = findViewById(R.id.toolbar_profile_activity);
         setSupportActionBar(mToolbar);
@@ -83,8 +118,9 @@ public class ProfileActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
     }
+
+
     public void initializeViews(){
-        profileEmailEditText = findViewById(R.id.input_profile_email);
         profileNameEditText = findViewById(R.id.input_profile_name);
         profileQuotesEditText = findViewById(R.id.input_profile_quotes);
         profilePhoneEditText = findViewById(R.id.input_profile_phone);
@@ -121,8 +157,6 @@ public class ProfileActivity extends AppCompatActivity {
         final EditText ProfileName = dialogView.findViewById(R.id.input_profile_name);
         profileNameEditText = ProfileName;
 
-        final EditText ProfileEmail = dialogView.findViewById(R.id.input_profile_email);
-        profileEmailEditText = ProfileEmail;
 
         final EditText ProfilePhone  = dialogView.findViewById(R.id.input_profile_phone);
         profilePhoneEditText = ProfilePhone;
@@ -154,7 +188,6 @@ public class ProfileActivity extends AppCompatActivity {
             String ProfileName = profileNameEditText.getText().toString();
             if(profileName!=null && !ProfileName.trim().isEmpty()){
                 profileName = ProfileName;
-
                 profileNameUpdate = new UserProfileChangeRequest.Builder()
                         .setDisplayName(profileName)
                         .build();
@@ -170,45 +203,46 @@ public class ProfileActivity extends AppCompatActivity {
                 profileNameTextView.setText(profileName);
             }
 
-          String  ProfileEmail = profileEmailEditText.getText().toString();
-        if (profileEmail!=null && !ProfileEmail.trim().isEmpty()){
-            profileEmail = ProfileEmail;
-
-            /*mFirebaseUser.sendEmailVerification()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.d(TAG, "Email sent. ");
-                        }
-                    });*/
-
-
-            mFirebaseUser.updateEmail(profileEmail)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Log.d(TAG, "User Email address updated");
-                            }
-                        }
-                    });
-
-            profileEmailTextView.setText(profileEmail);
-        }
-
         String  ProfilePhone = profilePhoneEditText.getText().toString();
-        if (profilePhone==null && !ProfilePhone.trim().isEmpty()){
+        if (profilePhone!=null && !ProfilePhone.trim().isEmpty()){
             profilePhone = ProfilePhone;
-            profilePhoneTextView.setText(profilePhone);
+
+
         }
 
         String ProfileQuotes = profileQuotesEditText.getText().toString();
-        if (profileQuotes==null && !ProfilePhone.trim().isEmpty()){
+        if (profileQuotes!=null && !ProfilePhone.trim().isEmpty()){
             profileQuotes = ProfileQuotes;
             profileQuoteTextView.setText(profileQuotes);
+        }
+
+        updatePhoneAndQuote(profilePhone, profileQuotes);
+        Log.d(TAG, "Successfully updated");
+
+
+        while (mCursor.moveToNext()){
+            profilePhone = mCursor.getString(mCursor.getColumnIndex(
+                    UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_PHONE_NUMBER));
+            if (profilePhone.equals(ProfilePhone)){
+                profilePhoneTextView.setText(profilePhone);
+                profilePhone1 = profilePhone;
+
+            }
+            /*profileQuotes = mCursor.getString(mCursor.getColumnIndex(
+                    UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES));*/
 
         }
 
+
+
+
+    }
+
+    private long updatePhoneAndQuote(String phone, String Quotes){
+        ContentValues cv = new ContentValues();
+        cv.put(UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_PHONE_NUMBER, phone);
+        cv.put(UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES, Quotes);
+        return mSQLiteDatabase.insert(UpdateProfileContract.UpdateProfileEntry.TABLE_NAME, null, cv);
     }
 
     public void chooseImage(View view){
@@ -221,6 +255,16 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "complete action using"), RC_PHOTO_PICKER);
             }
         });
+    }
+
+    private Cursor getProfileData(){
+        return mSQLiteDatabase.query(UpdateProfileContract.UpdateProfileEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES);
     }
 
     @Override
