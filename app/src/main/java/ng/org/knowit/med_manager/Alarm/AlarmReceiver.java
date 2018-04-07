@@ -13,22 +13,13 @@ import android.widget.Toast;
  */
 
 public class AlarmReceiver extends BroadcastReceiver {
-
-
     @Override
     public void onReceive(Context context, Intent intent) {
+        Toast.makeText(context, "Time to take medicine", Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(context, "It is time to take your medicine", Toast.LENGTH_SHORT).show();
-
-        //This will send a notification message and show notification in notification tray
         ComponentName comp = new ComponentName(context.getPackageName(),
                 AlarmNotificationService.class.getName());
         startWakefulService(context, (intent.setComponent(comp)));
-        /*if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 
-            // Set the alarm here.
-
-        }*/
     }
-
 }
