@@ -44,7 +44,7 @@ public class AlarmNotificationService extends IntentService {
 
         //Create notification
         NotificationCompat.Builder alamNotificationBuilder = new NotificationCompat.Builder(
-                this).setContentTitle("Take to take Medicine").setSmallIcon(R.mipmap.ic_launcher)
+                this).setContentTitle("Time to take Medicine").setSmallIcon(R.mipmap.ic_launcher)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setContentText(msg).setAutoCancel(true);
         alamNotificationBuilder.setContentIntent(contentIntent);
