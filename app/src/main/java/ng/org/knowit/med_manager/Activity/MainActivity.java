@@ -1,7 +1,10 @@
 package ng.org.knowit.med_manager.Activity;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -35,12 +38,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,7 +50,6 @@ import java.util.Locale;
 import ng.org.knowit.med_manager.Adapters.MedicineDatabaseAdapter;
 import ng.org.knowit.med_manager.Data.MedicineContract;
 import ng.org.knowit.med_manager.Data.MedicineDbHelper;
-import ng.org.knowit.med_manager.Data.TestUtil;
 import ng.org.knowit.med_manager.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,8 +65,20 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
 
+    private static final int ALARM_REQUEST_CODE = 133;
+
+    private static final int ONE_HOUR_IN_SECONDS = 3600;
+    private static final int TWO_HOURS_IN_SECONDS = 7200;
+    private static final int THREE_HOURS_IN_SECONDS = 10800;
+    private static final int SIX_HOURS_IN_SECONDS = 21600;
+    private static final int EIGHT_HOURS_IN_SECONDS = 28800;
+    private static final int TWELVE_HOURS_IN_SECONDS = 43200;
+    private static final int TWENTY_FOURS_HOURS_IN_SECONDS = 86400;
+
     private int spinnerPosition;
 
+    private AlarmManager mAlarmManager;
+    private PendingIntent mAlarmIntent, pendingIntent;
 
     private EditText startDateEditText, endDateEditText, medicineNameEditText, medicineDescriptionEditText;
     private Calendar myCalendar;
@@ -92,8 +103,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         //Initialize all the views
         initializeViews();
+
+        Intent alarmIntent = new Intent(MainActivity.this, ng.org.knowit.med_manager.Alarm.AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, ALARM_REQUEST_CODE, alarmIntent, 0);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -104,17 +119,11 @@ public class MainActivity extends AppCompatActivity {
         MedicineDbHelper dbHelper = new MedicineDbHelper(this);
         mSQLiteDatabase = dbHelper.getWritableDatabase();
 
-
         Cursor cursor = getAllMedicine();
-
 
         medicineDatabaseAdapter = new MedicineDatabaseAdapter(this, cursor);
 
         mRecyclerView.setAdapter(medicineDatabaseAdapter);
-
-
-
-
 
         setSupportActionBar(mToolbar);
         //noinspection deprecation
@@ -230,6 +239,9 @@ public class MainActivity extends AppCompatActivity {
     public void addToMedicineList(){
         //Setting the values gotten from the dialog to corresponding global variables
         medicineFrequency = String.valueOf(frequencySpinner.getSelectedItem());
+       spinnerPosition = frequencySpinner.getSelectedItemPosition();
+
+
         medicineName = medicineNameEditText.getText().toString();
         medicineDescription = medicineDescriptionEditText.getText().toString();
         medicineStartDate = startDateEditText.getText().toString();
@@ -367,7 +379,6 @@ public class MainActivity extends AppCompatActivity {
 
         frequencySpinner = dialogView.findViewById(R.id.spinner_frequency);
 
-
         final EditText MedicineNameEditText = dialogView.findViewById(R.id.input_medicine_name);
         medicineNameEditText = MedicineNameEditText;
 
@@ -387,6 +398,7 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 addToMedicineList();
+                createAlarm();
 
             }
         });
@@ -410,6 +422,48 @@ public class MainActivity extends AppCompatActivity {
     private boolean removeMedicine (long id){
         return mSQLiteDatabase.delete(
                 MedicineContract.MedicineEntry.TABLE_NAME, MedicineContract.MedicineEntry._ID + "=" + id, null) >0;
+    }
+
+    private void createAlarm(){
+        switch (spinnerPosition){
+            case 0:
+                triggerAlarmManager(ONE_HOUR_IN_SECONDS);
+                break;
+            case 1:
+                triggerAlarmManager(TWO_HOURS_IN_SECONDS);
+                break;
+            case 2:
+                triggerAlarmManager(THREE_HOURS_IN_SECONDS);
+                break;
+            case 3:
+                triggerAlarmManager(SIX_HOURS_IN_SECONDS);
+                break;
+            case 4 :
+                triggerAlarmManager(EIGHT_HOURS_IN_SECONDS);
+                break;
+            case 5 :
+                triggerAlarmManager(TWELVE_HOURS_IN_SECONDS);
+                break;
+            case 6:
+                triggerAlarmManager(TWENTY_FOURS_HOURS_IN_SECONDS);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    //Trigger alarm manager with entered time interval
+    public void triggerAlarmManager(int alarmTriggerTime) {
+        // get a Calendar object with current time
+        Calendar cal = Calendar.getInstance();
+        // add alarmTriggerTime seconds to the calendar object
+        cal.add(Calendar.SECOND, alarmTriggerTime);
+
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);//get instance of alarm manager
+        manager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);//set alarm manager with entered timer by converting into milliseconds
+
+        //Toast.makeText(this, "Alarm Set for " + alarmTriggerTime + " seconds.", Toast.LENGTH_SHORT).show();
     }
 
 

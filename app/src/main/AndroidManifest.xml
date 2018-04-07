@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ng.org.knowit.med_manager">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_descriptor"
@@ -27,6 +29,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activity.MainActivity" />
         </activity>
+
+        <!--  Declare  Alarm Broadcast receiver here  -->
+        <receiver android:name=".Alarm.AlarmReceiver$AlarmReceiver" />
+
+        <!--  Declare  Alarm Notification Service here  -->
+        <service android:name=".Alarm.AlarmNotificationService" />
+
     </application>
+
+
 
 </manifest>
