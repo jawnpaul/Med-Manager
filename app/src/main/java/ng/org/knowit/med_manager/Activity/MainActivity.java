@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     private MedicineDatabaseAdapter medicineDatabaseAdapter;
 
     private static final int RC_SIGN_IN = 123;
-    private PendingIntent pendingIntent;
 
     private int spinnerPosition;
 
@@ -82,7 +81,13 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private static final int ALARM_REQUEST_CODE =1;
+    private static final int ONE_HOUR_IN_SECONDS =3600;
+    private static final int TWO_HOURS_IN_SECONDS = 7200;
+    private static final int THREE_HOURS_IN_SECONDS = 10800;
+    private static final int SIX_HOURS_IN_SECONDS = 21600;
+    private static final int EIGHT_HOURS_IN_SECONDS = 28800;
+    private static final int TWELVE_HOURS_IN_SECONDS = 43200;
+    private static final int TWENTY_FOUR_HOURS_IN_SECONDS = 86400;
 
     private SQLiteDatabase mSQLiteDatabase;
     private String medicineFrequency, medicineName, medicineDescription,
@@ -118,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setAdapter(medicineDatabaseAdapter);
 
-        Intent alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, ALARM_REQUEST_CODE, alarmIntent, 0);
+
 
 
 
@@ -136,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                triggerAlarmManager(5);
-               // createNewMedicineDialog();
+                createNewMedicineDialog();
             }
         });
 
@@ -242,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
         medicineDescription = medicineDescriptionEditText.getText().toString();
         medicineStartDate = startDateEditText.getText().toString();
         medicineEndDate = endDateEditText.getText().toString();
+        spinnerPosition = frequencySpinner.getSelectedItemPosition();
 
         //Checking to make sure the values are not empty
         if (medicineName.length()==0 || medicineDescription.length()==0 ||
@@ -395,6 +399,7 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 addToMedicineList();
+                createAlarm();
 
             }
         });
@@ -407,29 +412,58 @@ public class MainActivity extends AppCompatActivity {
         b.show();
     }
 
-
     private void updateProfile(String profileName, Uri photoUrl){
         profileNameTextView.setText(profileName);
         Glide.with(getApplicationContext()).load(photoUrl).into(profileImage);
     }
-
-
 
     private boolean removeMedicine (long id){
         return mSQLiteDatabase.delete(
                 MedicineContract.MedicineEntry.TABLE_NAME, MedicineContract.MedicineEntry._ID + "=" + id, null) >0;
     }
 
-    public void triggerAlarmManager(int alarmTriggerTime) {
+    public void triggerAlarmManager(int alarmTriggerTime, int REQUEST_CODE) {
         // get a Calendar object with current time
         Calendar cal = Calendar.getInstance();
         // add alarmTriggerTime seconds to the calendar object
         cal.add(Calendar.SECOND, alarmTriggerTime);
 
+        Intent alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
+      PendingIntent  pendingIntent = PendingIntent.getBroadcast(MainActivity.this, REQUEST_CODE, alarmIntent, 0);
+
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);//get instance of alarm manager
+
         manager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);//set alarm manager with entered timer by converting into milliseconds
 
         Toast.makeText(this, "Alarm Set for " + alarmTriggerTime + " seconds.", Toast.LENGTH_SHORT).show();
+    }
+
+    public void createAlarm(){
+        switch (spinnerPosition){
+            case 0:
+                triggerAlarmManager(ONE_HOUR_IN_SECONDS, 100);
+                break;
+            case 1:
+                triggerAlarmManager(TWO_HOURS_IN_SECONDS, 200);
+                break;
+            case 2:
+                triggerAlarmManager(THREE_HOURS_IN_SECONDS, 300);
+                break;
+            case 3:
+                triggerAlarmManager(SIX_HOURS_IN_SECONDS, 400);
+                break;
+            case 4:
+                triggerAlarmManager(EIGHT_HOURS_IN_SECONDS, 500);
+                break;
+            case 5:
+                triggerAlarmManager(TWELVE_HOURS_IN_SECONDS, 600);
+                break;
+            case 6:
+                triggerAlarmManager(TWENTY_FOUR_HOURS_IN_SECONDS, 700);
+                break;
+            default:
+                break;
+        }
     }
 
 }
