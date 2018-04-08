@@ -1,11 +1,9 @@
 package ng.org.knowit.med_manager.Activity;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -27,44 +25,41 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ng.org.knowit.med_manager.Data.UpdateProfileContract;
-import ng.org.knowit.med_manager.Data.UpdateProfileDbHelper;
 import ng.org.knowit.med_manager.R;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
 
-    private EditText profileNameEditText, profileQuotesEditText, profilePhoneEditText;
+    private EditText profileNameEditText, profileQuotesEditText,
+            profilePhoneEditText, profileSecondaryEmailEditText;
 
-    private TextView profileNameTextView, profileEmailTextView, profileQuoteTextView, profilePhoneTextView;
+    private TextView profileNameTextView, profileEmailTextView,
+            profileQuoteTextView, profilePhoneTextView, profileSecondaryEmailTextView;
 
-    private String profileName, profileEmail, profilePhone, profileQuotes,profilePhone1;
+    private String profileName, profileEmail, profilePhone, profileQuotes, profileSecondaryEmail;
 
     private static final String TAG = "Profile Activity";
 
     private static final int RC_PHOTO_PICKER = 2;
 
-    private ImageView profileImageView;
+    private static final String MY_PREFERENCES = "my_preferences";
+    private static final String EMAIL = "Email_key";
+    private static final String PHONE = "Phone_key";
+    private static final String QUOTES = "Quotes_key";
 
-    private SQLiteDatabase mSQLiteDatabase;
+    private ImageView profileImageView;
 
     private Uri photoUrl, mPhotoUrl;
 
-
     private FirebaseUser mFirebaseUser;
 
-    private Cursor mCursor;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     private UserProfileChangeRequest profileNameUpdate, profileImageUpdate;
 
@@ -77,9 +72,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         profilePhone = "";
         profileQuotes = "";
+        profileSecondaryEmail = "";
 
         initializeViews();
-
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -93,21 +88,6 @@ public class ProfileActivity extends AppCompatActivity {
         photoUrl = mFirebaseUser.getPhotoUrl();
         Glide.with(this).load(photoUrl).into(profileImageView);
 
-        UpdateProfileDbHelper dbHelper = new UpdateProfileDbHelper(this);
-        mSQLiteDatabase = dbHelper.getWritableDatabase();
-        mSQLiteDatabase = dbHelper.getReadableDatabase();
-
-        mCursor = mSQLiteDatabase.query(UpdateProfileContract.UpdateProfileEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES);
-
-
-
-
         mToolbar = findViewById(R.id.toolbar_profile_activity);
         setSupportActionBar(mToolbar);
         //noinspection deprecation
@@ -117,6 +97,21 @@ public class ProfileActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_action_arrow_back);
+
+        mSharedPreferences = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+
+        if(mSharedPreferences.contains(EMAIL)){
+            profileSecondaryEmailTextView.setText(mSharedPreferences.getString(EMAIL, ""));
+        }
+
+        if(mSharedPreferences.contains(PHONE)){
+            profilePhoneTextView.setText(mSharedPreferences.getString(PHONE, ""));
+        }
+
+        if(mSharedPreferences.contains(QUOTES)){
+            profileQuoteTextView.setText(mSharedPreferences.getString(QUOTES, ""));
+        }
+
     }
 
 
@@ -128,6 +123,8 @@ public class ProfileActivity extends AppCompatActivity {
         profileEmailTextView = findViewById(R.id.profile_email_text_view);
         profilePhoneTextView = findViewById(R.id.profile_phone_text_view);
         profileQuoteTextView = findViewById(R.id.profile_quotes_text_view);
+        profileSecondaryEmailEditText = findViewById(R.id.input_profile_secondary_email);
+        profileSecondaryEmailTextView = findViewById(R.id.profile_secondary_email_text_view);
         profileImageView = findViewById(R.id.profile_image);
     }
 
@@ -143,7 +140,15 @@ public class ProfileActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.menu_profile_activity:
                 editProfile();
-
+                break;
+            case R.id.menu_change_profile_picture:
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "complete action using"), RC_PHOTO_PICKER);
+                break;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -164,10 +169,13 @@ public class ProfileActivity extends AppCompatActivity {
         final EditText ProfileQuotes = dialogView.findViewById(R.id.input_profile_quotes);
         profileQuotesEditText = ProfileQuotes;
 
+        final EditText ProfileSecondaryEmail = dialogView.findViewById(R.id.input_profile_secondary_email);
+        profileSecondaryEmailEditText = ProfileSecondaryEmail;
+
 
         dialogBuilder.setTitle("Edit Profile");
         dialogBuilder.setIcon(R.mipmap.ic_launcher);
-        dialogBuilder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 updateProfile();
             }
@@ -196,54 +204,55 @@ public class ProfileActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
+                                    profileNameTextView.setText(profileName);
                                     Log.d(TAG, "User Name  updated. ");
+                                } else if(!task.isSuccessful()){
+                                    Toast.makeText(ProfileActivity.this, "Profile name not updated because of no internet connection",
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
-                profileNameTextView.setText(profileName);
+
             }
 
         String  ProfilePhone = profilePhoneEditText.getText().toString();
         if (profilePhone!=null && !ProfilePhone.trim().isEmpty()){
             profilePhone = ProfilePhone;
-
+            mEditor = mSharedPreferences.edit();
+            mEditor.putString(PHONE, profilePhone);
+            mEditor.apply();
+            profilePhoneTextView.setText(profilePhone);
 
         }
 
         String ProfileQuotes = profileQuotesEditText.getText().toString();
         if (profileQuotes!=null && !ProfilePhone.trim().isEmpty()){
             profileQuotes = ProfileQuotes;
+            mEditor = mSharedPreferences.edit();
+            mEditor.putString(QUOTES, profileQuotes);
+            mEditor.apply();
             profileQuoteTextView.setText(profileQuotes);
+
         }
 
-        updatePhoneAndQuote(profilePhone, profileQuotes);
+        String ProfileSecondaryEmail = profileSecondaryEmailEditText.getText().toString();
+        if (profileSecondaryEmail!=null && !ProfileSecondaryEmail.trim().isEmpty()){
+            profileSecondaryEmail = ProfileSecondaryEmail;
+            mEditor = mSharedPreferences.edit();
+            mEditor.putString(EMAIL, profileSecondaryEmail);
+            mEditor.apply();
+            profileSecondaryEmailTextView.setText(profileSecondaryEmail);
+        }
+
         Log.d(TAG, "Successfully updated");
 
 
-        while (mCursor.moveToNext()){
-            profilePhone = mCursor.getString(mCursor.getColumnIndex(
-                    UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_PHONE_NUMBER));
-            if (profilePhone.equals(ProfilePhone)){
-                profilePhoneTextView.setText(profilePhone);
-                profilePhone1 = profilePhone;
-
-            }
-            /*profileQuotes = mCursor.getString(mCursor.getColumnIndex(
-                    UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES));*/
-
-        }
-
 
 
 
     }
 
-    private long updatePhoneAndQuote(String phone, String Quotes){
-        ContentValues cv = new ContentValues();
-        cv.put(UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_PHONE_NUMBER, phone);
-        cv.put(UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES, Quotes);
-        return mSQLiteDatabase.insert(UpdateProfileContract.UpdateProfileEntry.TABLE_NAME, null, cv);
-    }
+
 
     public void chooseImage(View view){
         profileImageView.setOnClickListener(new View.OnClickListener() {
@@ -257,15 +266,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private Cursor getProfileData(){
-        return mSQLiteDatabase.query(UpdateProfileContract.UpdateProfileEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                UpdateProfileContract.UpdateProfileEntry.COLUMN_PROFILE_QUOTES);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -282,12 +282,15 @@ public class ProfileActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
+                                Glide.with(ProfileActivity.this).load(mPhotoUrl).into(profileImageView);
                                 Log.d(TAG, "User Image  updated. ");
+                            } else if(!task.isSuccessful()){
+                                Toast.makeText(ProfileActivity.this, "No internet connection",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
 
-            Glide.with(this).load(mPhotoUrl).into(profileImageView);
         }
 
     }

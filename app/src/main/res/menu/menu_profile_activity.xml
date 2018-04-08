@@ -4,6 +4,9 @@
 
     <item
         android:id="@+id/menu_profile_activity"
-        android:title="Edit">
+        android:title="Edit Profile">
     </item>
+    <item
+        android:id="@+id/menu_change_profile_picture"
+        android:title="Change profile picture"></item>
 </menu>
