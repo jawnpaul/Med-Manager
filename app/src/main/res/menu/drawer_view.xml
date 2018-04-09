@@ -9,10 +9,17 @@
         android:icon="@drawable/ic_action_settings"/>
 </group>
 
-    <item android:title="social">
+    <item android:title="Share on">
         <menu>
-            <item android:title="@string/app_name"
-                android:icon="@drawable/ic_action_add"/>
+            <item
+                android:title="Facebook"
+                android:icon="@drawable/facebook_logo"/>
+            <item
+                android:title="Twitter"
+                android:icon="@drawable/twitter_logo"/>
+            <item
+                android:title="Instagram"
+                android:icon="@drawable/instagram_logo"/>
         </menu>
     </item>
 

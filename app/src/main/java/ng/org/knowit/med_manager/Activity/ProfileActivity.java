@@ -1,5 +1,6 @@
 package ng.org.knowit.med_manager.Activity;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -111,6 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
         if(mSharedPreferences.contains(QUOTES)){
             profileQuoteTextView.setText(mSharedPreferences.getString(QUOTES, ""));
         }
+
 
     }
 

@@ -17,6 +17,41 @@
         tools:context="ng.org.knowit.med_manager.MainActivity.Activity.MainActivity"
         tools:showIn="@layout/activity_main">
 
+        <LinearLayout
+            android:layout_marginTop="80dp"
+            android:weightSum="100"
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="34.56"
+                android:layout_gravity="center_horizontal"
+                tools:text="Hmm... \n Something went wrong."
+                android:text="You need to sign in to continue"
+                android:textStyle="bold"
+                android:paddingBottom="16dp"
+                android:textAppearance="?android:textAppearanceLarge"/>
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:id="@+id/empty_view_text"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="No internet connection"
+                tools:text="No internet connection.\nDouble-check your internet connection, then try again."
+                android:textAppearance="?android:textAppearanceMedium"
+                android:layout_weight="9.29" />
+        </LinearLayout>
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -24,6 +59,7 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_medicine"
