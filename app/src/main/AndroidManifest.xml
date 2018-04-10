@@ -22,22 +22,28 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
 
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity android:name=".Activity.ProfileActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activity.MainActivity" />
         </activity>
 
-        <!--  Declare  Alarm Broadcast receiver here  -->
+        <!-- Declare  Alarm Broadcast receiver here -->
         <receiver android:name=".Alarm.AlarmReceiver" />
 
-        <!--  Declare  Alarm Notification Service here  -->
+        <!-- Declare  Alarm Notification Service here -->
         <service android:name=".Alarm.AlarmNotificationService" />
 
+        <activity android:name=".Activity.MedicineDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activity.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
