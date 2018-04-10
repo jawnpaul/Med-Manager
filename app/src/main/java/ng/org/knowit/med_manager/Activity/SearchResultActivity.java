@@ -1,3 +1,19 @@
+/*
+* Copyright (C) 2017 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*  	http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package ng.org.knowit.med_manager.Activity;
 
 import android.app.SearchManager;
@@ -18,13 +34,9 @@ import ng.org.knowit.med_manager.R;
 
 public class SearchResultActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
     private String mQuery;
 
-    private SQLiteDatabase mSQLiteDatabase;
     private MedicineDbHelper dbHelper;
-
-    private SearchAdapter mSearchAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +48,26 @@ public class SearchResultActivity extends AppCompatActivity {
 
         Cursor cursor = getMedicineListByKeyWord(mQuery);
 
-        mSearchAdapter = new SearchAdapter(this, cursor, 0);
+        SearchAdapter searchAdapter = new SearchAdapter(this, cursor, 0);
         if (cursor==null){
             Toast.makeText(SearchResultActivity.this,"No records found!",Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(SearchResultActivity.this, cursor.getCount() + " records found!",Toast.LENGTH_LONG).show();
         }
 
-        ListView listView = (ListView) findViewById(R.id.search_result_list_view);
-        listView.setAdapter(mSearchAdapter);
+        ListView listView = findViewById(R.id.search_result_list_view);
+        listView.setAdapter(searchAdapter);
 
-        mSearchAdapter.swapCursor(cursor);
+        searchAdapter.swapCursor(cursor);
 
-        mToolbar = findViewById(R.id.toolbar_search_result_activity);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_search_result_activity);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("Search Result");
         //noinspection deprecation
-        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        //noinspection deprecation
+        toolbar.setBackgroundColor(getResources().getColor(R.color.blue));
+
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -68,13 +84,13 @@ public class SearchResultActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent){
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            @SuppressWarnings("UnnecessaryLocalVariable") String query = intent.getStringExtra(SearchManager.QUERY);
             mQuery = query;
         }
     }
 
-    public Cursor getMedicineListByKeyWord(String search){
-        mSQLiteDatabase = dbHelper.getReadableDatabase();
+    private Cursor getMedicineListByKeyWord(String search){
+        SQLiteDatabase SQLiteDatabase = dbHelper.getReadableDatabase();
         String selectQuery =  "SELECT  rowid as " +
                 MedicineContract.MedicineEntry._ID + "," +
                 MedicineContract.MedicineEntry.COLUMN_MEDICINE_NAME + "," +
@@ -86,7 +102,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 " WHERE " +  MedicineContract.MedicineEntry.COLUMN_MEDICINE_NAME + "  LIKE  '%" +search + "%' "
                 ;
 
-        Cursor cursor = mSQLiteDatabase.rawQuery(selectQuery, null);
+        Cursor cursor = SQLiteDatabase.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
 
         if (cursor == null) {

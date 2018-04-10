@@ -1,3 +1,19 @@
+/*
+* Copyright (C) 2017 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*  	http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package ng.org.knowit.med_manager.Adapters;
 
 import android.content.Context;
@@ -15,22 +31,18 @@ import ng.org.knowit.med_manager.Activity.MedicineDetailActivity;
 import ng.org.knowit.med_manager.Data.MedicineContract;
 import ng.org.knowit.med_manager.R;
 
-/**
- * Created by john on 3/29/18.
- */
-
 public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDatabaseAdapter.MedicineDatabaseViewHolder> {
 
-    private Context mContext;
+    private final Context mContext;
     private Cursor mCursor;
 
     private String MedicineName, MedicineDescription,
             MedicineFrequency, MedicineDuration, MedicineTimeStamp;
 
     private long Id;
-    private int imageId, elementsCount, mPosition;
+    private int imageId;
 
-    private int[] medicineImages = new int[]{
+    private final int[] medicineImages = new int[]{
             R.drawable.image_drug, R.drawable.image_drug_two, R.drawable.image_bp, R.drawable.image_one,
             R.drawable.image_two, R.drawable.image_three, R.drawable.image_four,
             R.drawable.image_five, R.drawable.image_seven, R.drawable.image_nine
@@ -53,8 +65,8 @@ public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDataba
     public void onBindViewHolder(
             MedicineDatabaseViewHolder medicineDatabaseViewHolder, int position) {
 
-        mPosition = medicineDatabaseViewHolder.getAdapterPosition() + 1;
-        setImage(elementsCount,mPosition);
+        int position1 = medicineDatabaseViewHolder.getAdapterPosition() + 1;
+        setImage(position1);
 
         if (!mCursor.moveToPosition(position))
             return;
@@ -79,7 +91,11 @@ public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDataba
                 MedicineContract.MedicineEntry.COLUMN_TIMESTAMP));
         MedicineTimeStamp = medicineTimeStamp;
 
-        Id = mCursor.getLong(mCursor.getColumnIndex(MedicineContract.MedicineEntry._ID));
+        long id = mCursor.getLong(mCursor.getColumnIndex(MedicineContract.MedicineEntry._ID));
+
+        medicineDatabaseViewHolder.itemView.setTag(id);
+
+        Id = id;
 
 
 
@@ -101,7 +117,7 @@ public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDataba
 
     @Override
     public int getItemCount() {
-        elementsCount = mCursor.getCount() + 1;
+        @SuppressWarnings("UnusedAssignment") int elementsCount = mCursor.getCount() + 1;
         return mCursor.getCount();
     }
 
@@ -155,7 +171,7 @@ public class MedicineDatabaseAdapter extends RecyclerView.Adapter<MedicineDataba
 
     }
 
-    private void setImage(int elementsCount, int elementPosition){
+    private void setImage(int elementPosition){
         if (elementPosition-1<medicineImages.length){
             switch (elementPosition-1){
                 case 0:

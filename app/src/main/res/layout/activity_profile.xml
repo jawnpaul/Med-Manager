@@ -15,11 +15,9 @@
 
     <ScrollView android:layout_height="match_parent"
         android:layout_width="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        >
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -33,7 +31,8 @@
                     android:background="@drawable/gradient_background"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_image"
                         android:onClick="chooseImage"
@@ -60,7 +59,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="2dp"
-                        android:text="Wiliam@gmail.com"
+                        android:text="@string/wiliam_gmail_com"
                         android:textAppearance="@android:style/TextAppearance.Material.Body1"
                         tools:targetApi="lollipop" />
                 </LinearLayout>
@@ -78,11 +77,13 @@
                     android:orientation="horizontal"
                     android:paddingLeft="25dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="RtlHardcoded,RtlSymmetry,UseCompoundDrawables">
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:src="@drawable/ic_action_contact_email"/>
+                        android:src="@drawable/ic_action_contact_email"
+                        tools:ignore="ContentDescription" />
                     <TextView
                         android:id="@+id/profile_secondary_email_text_view"
                         android:textStyle="bold"
@@ -90,7 +91,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="20dp"
-                        android:text="My secondary email"/>
+                        android:text="@string/my_secondary_email"
+                        tools:ignore="RtlHardcoded,RtlSymmetry" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -98,11 +100,13 @@
                     android:orientation="horizontal"
                     android:paddingLeft="25dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="RtlHardcoded,RtlSymmetry,UseCompoundDrawables">
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:src="@drawable/ic_action_contact_phone"/>
+                        android:src="@drawable/ic_action_contact_phone"
+                        tools:ignore="ContentDescription" />
                     <TextView
                         android:id="@+id/profile_phone_text_view"
                         android:textStyle="bold"
@@ -110,18 +114,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="20dp"
-                        android:text="My Phone Number"/>
+                        android:text="@string/my_phone_number"
+                        tools:ignore="RtlHardcoded,RtlSymmetry" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_marginTop="25dp"
                     android:orientation="horizontal"
                     android:paddingLeft="25dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    tools:ignore="RtlHardcoded,RtlSymmetry,UseCompoundDrawables">
                     <ImageView
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:src="@drawable/ic_action_quote"/>
+                        android:src="@drawable/ic_action_quote"
+                        tools:ignore="ContentDescription" />
                     <TextView
                         android:id="@+id/profile_quotes_text_view"
                         android:textStyle="bold"
@@ -129,7 +136,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="20dp"
-                        android:text="Quotes to live by"/>
+                        android:text="@string/quotes_to_live_by_"
+                        tools:ignore="RtlHardcoded,RtlSymmetry" />
                 </LinearLayout>
             </LinearLayout>
 

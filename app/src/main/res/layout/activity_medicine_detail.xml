@@ -20,7 +20,8 @@
         style="@android:style/Widget.Material.ScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbarStyle="insideOverlay">
+        android:scrollbarStyle="insideOverlay"
+        tools:targetApi="lollipop">
 
         <LinearLayout
             android:padding="16dp"
@@ -32,14 +33,15 @@
                 android:id="@+id/medicine_detail_image"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                app:srcCompat="@drawable/image_drug" />
+                app:srcCompat="@drawable/image_drug"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/medicine_detail_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
-                android:text="Paracetamol"
+                android:text="@string/paracetamol"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <TextView
@@ -53,21 +55,21 @@
                 android:id="@+id/medicine_detail_frequency"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="medicine frequency"
+                android:text="@string/medicine_frequency"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
             <TextView
                 android:id="@+id/medicine_detail_interval"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="medicine interval"
+                android:text="@string/medicine_interval"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
             <TextView
                 android:id="@+id/medicine_detail_date_created"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Date created"
+                android:text="@string/date_created"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         </LinearLayout>

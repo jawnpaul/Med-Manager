@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="IconColors">
+        <ignore path="src/main/res/drawable-hdpi/ic_action_contact_email.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_action_contact_phone.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_action_person.png" />
+        <ignore path="src/main/res/drawable-hdpi/ic_action_quote.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_action_contact_email.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_action_contact_phone.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_action_person.png" />
+        <ignore path="src/main/res/drawable-mdpi/ic_action_quote.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_action_contact_email.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_action_contact_phone.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_action_person.png" />
+        <ignore path="src/main/res/drawable-xhdpi/ic_action_quote.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/ic_action_contact_email.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/ic_action_contact_phone.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/ic_action_person.png" />
+        <ignore path="src/main/res/drawable-xxhdpi/ic_action_quote.png" />
+    </issue>
+    <issue id="IconLocation">
+        <ignore path="src/main/res/drawable/facebook_logo.png" />
+        <ignore path="src/main/res/drawable/image_bp.jpg" />
+        <ignore path="src/main/res/drawable/image_drug.jpg" />
+        <ignore path="src/main/res/drawable/image_drug_two.jpg" />
+        <ignore path="src/main/res/drawable/image_five.jpg" />
+        <ignore path="src/main/res/drawable/image_four.jpg" />
+        <ignore path="src/main/res/drawable/image_nine.jpg" />
+        <ignore path="src/main/res/drawable/image_one.jpg" />
+        <ignore path="src/main/res/drawable/image_seven.jpg" />
+        <ignore path="src/main/res/drawable/image_three.jpg" />
+        <ignore path="src/main/res/drawable/image_two.jpg" />
+        <ignore path="src/main/res/drawable/instagram_logo.png" />
+        <ignore path="src/main/res/drawable/twitter_logo.png" />
+    </issue>
+</lint>

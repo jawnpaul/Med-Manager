@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Copyright (C) 2017 The Android Open Source Project
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  	http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.-->
+
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:layout_margin="5dp"
     card_view:cardCornerRadius="4dp"
-    android:elevation="5dp">
+    android:elevation="5dp"
+    tools:ignore="UnusedAttribute">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="100">
+        android:weightSum="100"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -24,7 +36,8 @@
                 android:id="@+id/medicine_image"
                 android:src="@drawable/common_google_signin_btn_icon_dark_normal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <RelativeLayout
@@ -43,7 +56,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:paddingTop="0dp"
-                android:text="First medicine"
+                android:text="@string/first_medicine"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
             <TextView
@@ -51,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="0dp"
-                android:text="This is the description of the medicine "
+                android:text="@string/this_is_the_description_of_the_medicine"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:layout_below="@+id/text_medicine_name"
                 android:layout_alignParentLeft="true"
@@ -61,7 +74,7 @@
                 android:id="@+id/text_frequency"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Twice a day"
+                android:text="@string/twice_a_day"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
@@ -71,7 +84,7 @@
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Duration:"
+                android:text="@string/duration"
                 android:paddingBottom="0dp"
                 android:layout_above="@+id/textView15"
                 android:layout_alignParentLeft="true"
@@ -81,11 +94,12 @@
                 android:id="@+id/text_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Jan 2014 - Jan 2018"
+                android:text="@string/jan_2014_jan_2018"
                 android:textAppearance="@android:style/TextAppearance.Material.Subhead"
                 android:layout_alignTop="@+id/textView12"
                 android:layout_toRightOf="@+id/textView12"
-                android:layout_toEndOf="@+id/textView12" />
+                android:layout_toEndOf="@+id/textView12"
+                tools:ignore="NewApi" />
 
             <TextView
                 android:id="@+id/textView15"
@@ -95,7 +109,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:paddingBottom="2dp"
-                android:text="Created :" />
+                android:text="@string/created" />
 
             <TextView
                 android:id="@+id/text_date_created"
@@ -104,8 +118,9 @@
                 android:layout_alignTop="@+id/textView15"
                 android:layout_toEndOf="@+id/textView12"
                 android:layout_toRightOf="@+id/textView12"
-                android:text="October first 1960"
-                android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
+                android:text="@string/october_first_1960"
+                android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+                tools:ignore="NewApi" />
         </RelativeLayout>
 
     </LinearLayout>

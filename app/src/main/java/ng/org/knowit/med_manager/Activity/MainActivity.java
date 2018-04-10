@@ -1,5 +1,22 @@
+/*
+* Copyright (C) 2017 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*  	http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package ng.org.knowit.med_manager.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -24,7 +41,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,6 +74,7 @@ import ng.org.knowit.med_manager.Data.MedicineContract;
 import ng.org.knowit.med_manager.Data.MedicineDbHelper;
 import ng.org.knowit.med_manager.R;
 
+@SuppressWarnings({"UnnecessaryLocalVariable", "unused", "UnusedParameters", "UnusedAssignment"})
 public class MainActivity extends AppCompatActivity {
 
 
@@ -72,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
 
     private int spinnerPosition;
-
 
     private EditText startDateEditText, endDateEditText, medicineNameEditText, medicineDescriptionEditText;
     private Calendar myCalendar;
@@ -95,16 +111,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int TWENTY_FOUR_HOURS_IN_MILLI_SECONDS = 86400000;
 
     private SQLiteDatabase mSQLiteDatabase;
-    private String medicineFrequency, medicineName, medicineDescription,
-            medicineDuration, medicineStartDate,
-            medicineEndDate, profleName, profileEmail, profilePhoneNumber;
+    private String profleName;
+    private String profileEmail;
+    private String profilePhoneNumber;
     private Uri profilePhotoUrl;
 
     private RecyclerView mRecyclerView;
 
     private View emptyStateView;
 
-    private TextView profileNameTextView, emptyViewText;
+    private TextView profileNameTextView;
     private ImageView profileImage;
 
     @Override
@@ -157,7 +173,9 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
         //noinspection deprecation
-        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
+        mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        //noinspection deprecation
+        mToolbar.setBackgroundColor(getResources().getColor(R.color.blue));
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -271,13 +289,13 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
-    public void addToMedicineList(){
+    private void addToMedicineList(){
         //Setting the values gotten from the dialog to corresponding global variables
-        medicineFrequency = String.valueOf(frequencySpinner.getSelectedItem());
-        medicineName = medicineNameEditText.getText().toString();
-        medicineDescription = medicineDescriptionEditText.getText().toString();
-        medicineStartDate = startDateEditText.getText().toString();
-        medicineEndDate = endDateEditText.getText().toString();
+        String medicineFrequency = String.valueOf(frequencySpinner.getSelectedItem());
+        String medicineName = medicineNameEditText.getText().toString();
+        String medicineDescription = medicineDescriptionEditText.getText().toString();
+        String medicineStartDate = startDateEditText.getText().toString();
+        String medicineEndDate = endDateEditText.getText().toString();
         spinnerPosition = frequencySpinner.getSelectedItemPosition();
 
         //Checking to make sure the values are not empty
@@ -293,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         //Concatenating the two date Strings to form a single String
-        medicineDuration = medicineStartDate + " - " + medicineEndDate;
+        String medicineDuration = medicineStartDate + " - " + medicineEndDate;
         //Log.d("Lol", medicineName+medicineDescription+ medicineFrequency +medicineStartDate + medicineEndDate + " " + medicineDuration);
         addNewMedicine(medicineName, medicineDescription, medicineFrequency, medicineDuration);
         Log.d("Lol" ,"Successfully created");
@@ -315,7 +333,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private long addNewMedicine(String medicineName, String medicineDescription, String medicineFrequency, String medicineDuration){
+    @SuppressWarnings("UnusedReturnValue")
+    private long addNewMedicine(String medicineName, String medicineDescription,
+            String medicineFrequency, String medicineDuration){
         ContentValues cv = new ContentValues();
         cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_NAME, medicineName);
         cv.put(MedicineContract.MedicineEntry.COLUMN_MEDICINE_DESCRIPTION, medicineDescription);
@@ -362,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
         profileImage = mNavigationView.getHeaderView(0).findViewById(R.id.image_profile);
         profileNameTextView = mNavigationView.getHeaderView(0).findViewById(R.id.text_profile_name);
         emptyStateView = findViewById(R.id.empty_view);
-        emptyViewText = findViewById(R.id.empty_view_text);
+        TextView emptyViewText = findViewById(R.id.empty_view_text);
     }
 
     @Override
@@ -425,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                else if(isConnected){
+                else {
                     Toast.makeText(this, "Sign in cancelled", Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -437,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
     private void createNewMedicineDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.add_medicine_dialog, null);
+        @SuppressLint("InflateParams") final View dialogView = inflater.inflate(R.layout.add_medicine_dialog, null);
         dialogBuilder.setView(dialogView);
 
         frequencySpinner = dialogView.findViewById(R.id.spinner_frequency);
@@ -483,12 +503,7 @@ public class MainActivity extends AppCompatActivity {
             Glide.with(getApplicationContext()).load(photoUrl).into(profileImage);
     }
 
-    private boolean removeMedicine (long id){
-        return mSQLiteDatabase.delete(
-                MedicineContract.MedicineEntry.TABLE_NAME, MedicineContract.MedicineEntry._ID + "=" + id, null) >0;
-    }
-
-    public void triggerAlarmManager(long alarmInterval, int REQUEST_CODE) {
+    private void triggerAlarmManager(long alarmInterval, int REQUEST_CODE) {
 
         //This gives the start date in milliseconds
         long date =  startDate.getTime();
@@ -536,8 +551,8 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     break;
             }
-        } else if (currentDate.after(endDate)){
-            return;
+        } else //noinspection StatementWithEmptyBody
+            if (currentDate.after(endDate)){
         }
     }
 

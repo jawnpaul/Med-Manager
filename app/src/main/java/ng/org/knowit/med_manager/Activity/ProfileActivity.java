@@ -1,6 +1,22 @@
+/*
+* Copyright (C) 2017 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*  	http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package ng.org.knowit.med_manager.Activity;
 
-import android.app.SearchManager;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,9 +48,8 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 import ng.org.knowit.med_manager.R;
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 public class ProfileActivity extends AppCompatActivity {
-
-    private Toolbar mToolbar;
 
     private EditText profileNameEditText, profileQuotesEditText,
             profilePhoneEditText, profileSecondaryEmailEditText;
@@ -42,7 +57,10 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView profileNameTextView, profileEmailTextView,
             profileQuoteTextView, profilePhoneTextView, profileSecondaryEmailTextView;
 
-    private String profileName, profileEmail, profilePhone, profileQuotes, profileSecondaryEmail;
+    private String profileName;
+    private String profilePhone;
+    private String profileQuotes;
+    private String profileSecondaryEmail;
 
     private static final String TAG = "Profile Activity";
 
@@ -55,14 +73,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ImageView profileImageView;
 
-    private Uri photoUrl, mPhotoUrl;
+    private Uri mPhotoUrl;
 
     private FirebaseUser mFirebaseUser;
 
     private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditor;
-
-    private UserProfileChangeRequest profileNameUpdate, profileImageUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,19 +95,23 @@ public class ProfileActivity extends AppCompatActivity {
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
+        //noinspection ConstantConditions
         profileName = mFirebaseUser.getDisplayName();
         profileNameTextView.setText(profileName);
 
-        profileEmail = mFirebaseUser.getEmail();
+        String profileEmail = mFirebaseUser.getEmail();
         profileEmailTextView.setText(profileEmail);
 
-        photoUrl = mFirebaseUser.getPhotoUrl();
+        Uri photoUrl = mFirebaseUser.getPhotoUrl();
         Glide.with(this).load(photoUrl).into(profileImageView);
 
-        mToolbar = findViewById(R.id.toolbar_profile_activity);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_profile_activity);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("Profile");
         //noinspection deprecation
-        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        //noinspection deprecation
+        toolbar.setBackgroundColor(getResources().getColor(R.color.blue));
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -117,7 +136,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void initializeViews(){
+    private void initializeViews(){
         profileNameEditText = findViewById(R.id.input_profile_name);
         profileQuotesEditText = findViewById(R.id.input_profile_quotes);
         profilePhoneEditText = findViewById(R.id.input_profile_phone);
@@ -157,7 +176,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void editProfile() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.edit_profile_dialog, null);
+        @SuppressLint("InflateParams") final View dialogView = inflater.inflate(R.layout.edit_profile_dialog, null);
         dialogBuilder.setView(dialogView);
 
 
@@ -198,7 +217,7 @@ public class ProfileActivity extends AppCompatActivity {
             String ProfileName = profileNameEditText.getText().toString();
             if(profileName!=null && !ProfileName.trim().isEmpty()){
                 profileName = ProfileName;
-                profileNameUpdate = new UserProfileChangeRequest.Builder()
+                UserProfileChangeRequest profileNameUpdate = new UserProfileChangeRequest.Builder()
                         .setDisplayName(profileName)
                         .build();
                 mFirebaseUser.updateProfile(profileNameUpdate).addOnCompleteListener(
@@ -218,11 +237,12 @@ public class ProfileActivity extends AppCompatActivity {
             }
 
         String  ProfilePhone = profilePhoneEditText.getText().toString();
+        SharedPreferences.Editor editor;
         if (profilePhone!=null && !ProfilePhone.trim().isEmpty()){
             profilePhone = ProfilePhone;
-            mEditor = mSharedPreferences.edit();
-            mEditor.putString(PHONE, profilePhone);
-            mEditor.apply();
+            editor = mSharedPreferences.edit();
+            editor.putString(PHONE, profilePhone);
+            editor.apply();
             profilePhoneTextView.setText(profilePhone);
 
         }
@@ -230,9 +250,9 @@ public class ProfileActivity extends AppCompatActivity {
         String ProfileQuotes = profileQuotesEditText.getText().toString();
         if (profileQuotes!=null && !ProfilePhone.trim().isEmpty()){
             profileQuotes = ProfileQuotes;
-            mEditor = mSharedPreferences.edit();
-            mEditor.putString(QUOTES, profileQuotes);
-            mEditor.apply();
+            editor = mSharedPreferences.edit();
+            editor.putString(QUOTES, profileQuotes);
+            editor.apply();
             profileQuoteTextView.setText(profileQuotes);
 
         }
@@ -240,9 +260,9 @@ public class ProfileActivity extends AppCompatActivity {
         String ProfileSecondaryEmail = profileSecondaryEmailEditText.getText().toString();
         if (profileSecondaryEmail!=null && !ProfileSecondaryEmail.trim().isEmpty()){
             profileSecondaryEmail = ProfileSecondaryEmail;
-            mEditor = mSharedPreferences.edit();
-            mEditor.putString(EMAIL, profileSecondaryEmail);
-            mEditor.apply();
+            editor = mSharedPreferences.edit();
+            editor.putString(EMAIL, profileSecondaryEmail);
+            editor.apply();
             profileSecondaryEmailTextView.setText(profileSecondaryEmail);
         }
 
@@ -256,6 +276,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
+    @SuppressWarnings("UnusedParameters")
     public void chooseImage(View view){
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,7 +297,7 @@ public class ProfileActivity extends AppCompatActivity {
         if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
             mPhotoUrl = data.getData();
 
-            profileImageUpdate = new UserProfileChangeRequest.Builder()
+            UserProfileChangeRequest profileImageUpdate = new UserProfileChangeRequest.Builder()
                     .setPhotoUri(mPhotoUrl)
                     .build();
             mFirebaseUser.updateProfile(profileImageUpdate).addOnCompleteListener(
