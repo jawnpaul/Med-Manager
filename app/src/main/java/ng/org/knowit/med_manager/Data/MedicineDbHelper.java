@@ -38,4 +38,6 @@ public class MedicineDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MedicineEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
+
+
 }
